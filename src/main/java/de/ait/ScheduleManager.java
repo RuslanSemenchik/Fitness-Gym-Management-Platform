@@ -1,13 +1,13 @@
 package de.ait;
 
 import java.util.Scanner;
-
+/*
 public class ScheduleManager {
     public static Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
-        boolean run = true;
+        boolean runer = true;
         ScheduleMethodes scheduleMethodes = new ScheduleMethodes();
-        while (run) {
+        while (runer) {
             showMenu(); // Показываем меню
             int choice = scanner.nextInt(); //
             scanner.nextLine();
@@ -16,7 +16,6 @@ public class ScheduleManager {
             switch (choice) {
                 case 1 -> {
                     // Добавление нового занятия
-                    // Adding a new player
                     System.out.println("New class ID : ");
                     String id = scanner.nextLine().trim(); // Ввод ID
                     System.out.println("Class type : ");
@@ -36,7 +35,9 @@ public class ScheduleManager {
 
                 }
 
-                /*
+
+
+
                 case 2 -> {
                     // Размещение ставки игроком
                     // Placing a bet by the player
@@ -46,7 +47,6 @@ public class ScheduleManager {
                     double bet = scanner.nextDouble(); // Ввод суммы ставки
                     casinoSystem.placeBet(playerId, bet); // Размещение ставки
                 }
-                */
 
                 case 3 -> {
                     // Показать всех игроков
@@ -59,6 +59,7 @@ public class ScheduleManager {
                     System.out.println("Close Application");
                     run = false; // Устанавливаем run в false для выхода из цикла
                 }
+
 
 
                 default -> System.out.println("Invalid choice"); // Сообщение об ошибке при неверном вводе
@@ -82,7 +83,7 @@ public class ScheduleManager {
         System.out.println("Select an action: ");
     }
 
-}
+
 
 
 
