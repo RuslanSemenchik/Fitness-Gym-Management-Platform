@@ -1,89 +1,185 @@
 package de.ait;
 
-import java.util.Scanner;
-/*
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+@Slf4j
 public class ScheduleManager {
-    public static Scanner scanner = new Scanner(System.in);
-    public static void main(String[] args) {
-        boolean runer = true;
-        ScheduleMethodes scheduleMethodes = new ScheduleMethodes();
-        while (runer) {
-            showMenu(); // Показываем меню
-            int choice = scanner.nextInt(); //
-            scanner.nextLine();
+    private static final Logger log = LoggerFactory.getLogger(ScheduleManager.class);
+    private LocalDate schedulesDate;
+    private List<ClassSchedule> daySchedules;
+
+    public ScheduleManager(LocalDate schedulesDate) {
+        this.schedulesDate = schedulesDate;
+        daySchedules = new ArrayList<>();
+
+    }
+
+    public LocalDate getScheduleDate() {
+        return schedulesDate;
+    }
+
+    public List<ClassSchedule> getDaySchedules() {
+        return new ArrayList<ClassSchedule>(daySchedules);
+    }
+
+    public void addSchedule(ClassSchedule classSchedule) {
+        if (classSchedule == null) {
+
+            System.out.println("Class schedule or date of schedule is null");
+            log.warn("Class schedule or date of schedule is null");
+        } else if (classSchedule.getId().trim() == null || classSchedule.getId().isEmpty() ||
+                classSchedule.getClassType().trim() == null || classSchedule.getClassType().isEmpty() ||
+                classSchedule.getTrainerName().trim() == null || classSchedule.getClassType().isEmpty() ||
+                classSchedule.getTime().trim() == null || classSchedule.getTime().isEmpty() ||
+                classSchedule.getRoom().trim() == null || classSchedule.getRoom().isEmpty()) {
+
+            System.out.println("Id or classType or,trainerName, or time or room is null or empty");
+            log.warn("Id or classType or,trainerName, or time or room is null or empty");
+        } else if (isTrainerAvailable(classSchedule.getTrainerName(), classSchedule.getTime()) &&
+                isRoomAvailable(classSchedule.getTime(), classSchedule.getRoom())) {
 
 
-            switch (choice) {
-                case 1 -> {
-                    // Добавление нового занятия
-                    System.out.println("New class ID : ");
-                    String id = scanner.nextLine().trim(); // Ввод ID
-                    System.out.println("Class type : ");
-                    String classType = scanner.nextLine().trim();
-                    System.out.println("Trainer name : ");
-                    String trainerName = scanner.nextLine().trim();
-                    System.out.println("Time : ");
-                    String time = scanner.nextLine().trim();
-                    System.out.println("Room : ");
-                    int room = scanner.nextInt();
-                    scanner.nextLine();
-
-                    ClassSchedule classSchedule = new ClassSchedule(id,classType,trainerName,time,room);
-                    scheduleMethodes.addClassSchedule(classSchedule);
+            daySchedules.add(classSchedule);
+            System.out.println("Class schedule with Id : " + classSchedule.getId() + " for " + getScheduleDate() + " added!");
 
 
+        }
+    }
 
+    public boolean isTrainerAvailable(String trainerName, String time) {
+        if (trainerName.trim() == null || trainerName.trim().isEmpty() ||
+                time.trim() == null || trainerName.trim().isEmpty()) {
+
+           // System.out.println("Trainer name or time  is null or empty");
+            //log.warn("Trainer name or time  is null or empty");
+            return false;
+        } else {
+            for (ClassSchedule classSchedule : daySchedules) {
+                if (classSchedule.getTrainerName().trim().equals(trainerName.trim()) &&
+                        classSchedule.getTime().trim().equals(time.trim())) {
+                   // System.out.println("Trainer : " + trainerName + " at " + time + " is not available ");
+                   // log.info("Trainer : " + trainerName + " at " + time + " is not available ");
+                    return false;
                 }
 
+            }
+            //System.out.println("Trainer : " + trainerName + " at " + time + " is available ");
+            //log.info("Trainer : " + trainerName + " at " + time + " is  available ");
+            return true;
+        }
+    }
 
-
-
-                case 2 -> {
-                    // Размещение ставки игроком
-                    // Placing a bet by the player
-                    System.out.println("Player ID: ");
-                    String playerId = scanner.nextLine(); // Ввод ID игрока
-                    System.out.println("Player bet: ");
-                    double bet = scanner.nextDouble(); // Ввод суммы ставки
-                    casinoSystem.placeBet(playerId, bet); // Размещение ставки
+    public boolean isRoomAvailable(String time, String room) {
+        if (time.trim() == null || time.trim().isEmpty() ||
+                room.trim() == null || room.trim().isEmpty()) {
+            //System.out.println("Time or room  is null or empty");
+            //log.warn("Time or room  is null or empty");
+            return false;
+        } else {
+            for (ClassSchedule classSchedule : daySchedules) {
+                if (classSchedule.getTime().trim().equals(time.trim()) &&
+                        classSchedule.getRoom().trim().equals(room.trim())) {
+                    //System.out.println("Room : " + room + " at " + time + " is not available ");
+                    //log.info("Room : " + room + " at " + time + " is not available ");
+                    return false;
                 }
 
-                case 3 -> {
-                    // Показать всех игроков
-                    // Display all players
-                    scheduleMethodes.showInfo();
+            }
+            System.out.println("Room : " + room + " at " + time + " is available ");
+            log.info("Room : " + room + " at " + time + " is  available ");
+            return true;
+        }
+    }
+
+    public void removeSchedule(String id) {
+        if (id.trim() == null || id.trim().isEmpty()) {
+            System.out.println("Id :" + id + " is null or empty");
+            log.warn("Id :" + id + " is null or empty");
+        } else {
+
+            Iterator<ClassSchedule> iterator = daySchedules.iterator();
+            while (iterator.hasNext()) {
+                ClassSchedule classSchedule = iterator.next();
+                if (classSchedule.getId().equals(id)) {
+                    iterator.remove();
+                    System.out.println("Schedule with Id:" + id + " removed");
+                    log.info("Schedule with Id:" + id + " removed");
+                    break;
+                } else {
+                    System.out.println("Schedule with Id:" + id + " not found");
+                    log.info("Schedule with Id:" + id + " not found ");
+                    break;
                 }
-                case 4 -> {
-                    // Завершение работы приложения
-                    // Exit the application
-                    System.out.println("Close Application");
-                    run = false; // Устанавливаем run в false для выхода из цикла
-                }
 
-
-
-                default -> System.out.println("Invalid choice"); // Сообщение об ошибке при неверном вводе
             }
         }
+    }
 
+    public void editSchedule(String id, String newId, String newClassType, String newTrainerName, String newTime, String newRoom) {
+        if (id.trim() == null || id.trim().isEmpty()) {
+            System.out.println("Id :" + id + " is null or empty");
+            log.warn("Id :" + id + " is null or empty");
+        } else {
 
+            for (ClassSchedule classSchedule : daySchedules) {
+                if (classSchedule.getId().equals(id)) {
+                    daySchedules.set(daySchedules.indexOf(classSchedule), new ClassSchedule(newId, newClassType, newTrainerName, newTime, newRoom));
+                    System.out.println("Schedule with Id:" + id + " edited");
+                    log.info("Schedule with Id:" + id + " edited");
 
+                } else {
+                    System.out.println("Schedule with Id:" + id + " not found");
+                    log.info("Schedule with Id:" + id + " not found ");
+                }
 
+            }
+        }
+    }
 
-
+    public void showDaySchedules() {
+        System.out.println(" Date of schedules : " + schedulesDate);
+        System.out.println("_______________________________________");
+        for (ClassSchedule classSchedule : daySchedules) {
+            System.out.println(classSchedule.toString());
+        }
 
     }
 
-    public static void showMenu() {
-        System.out.println("\nMenu");
-        System.out.println("1. Add a new schedule");
-        System.out.println("2. Remove an schedule");
-        System.out.println("3. View all schedules");
-        System.out.println("4. Exit");
-        System.out.println("Select an action: ");
+    public void generateScheduleReport(LocalDate schedulesDate, String trainerName){
+        System.out.println(" Schedule report for  as of trainer : "+ trainerName + " for " + schedulesDate);
+        System.out.println("_______________________________________");
+        int count = 0;
+        for (ClassSchedule classSchedule : daySchedules) {
+            if (classSchedule.getTrainerName().equals(trainerName)){
+                count +=1;
+            }
+
+        }
+        System.out.println(" Trainer : "+ trainerName + "conducted " + count+ " schedules");
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScheduleManager that = (ScheduleManager) o;
+        return Objects.equals(schedulesDate, that.schedulesDate) && Objects.equals(daySchedules, that.daySchedules);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(schedulesDate, daySchedules);
+    }
+}
 
 
 
