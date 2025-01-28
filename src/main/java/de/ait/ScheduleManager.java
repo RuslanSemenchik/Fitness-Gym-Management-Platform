@@ -131,11 +131,17 @@ public class ScheduleManager {
 
             for (ClassSchedule classSchedule : daySchedules) {
                 if (classSchedule.getId().equals(id)) {
-                    daySchedules.set(daySchedules.indexOf(classSchedule), new ClassSchedule(newId, newClassType, newTrainerName, newTime, newRoom));
+                    classSchedule.setId(newId);
+                    classSchedule.setClassType(newClassType);
+                    classSchedule.setTrainerName(newTrainerName);
+                    classSchedule.setTime(newTime);
+                    classSchedule.setRoom(newRoom);
+
                     System.out.println("Schedule with Id:" + id + " edited");
                     log.info("Schedule with Id:" + id + " edited");
+                }
 
-                } else {
+                 else {
                     System.out.println("Schedule with Id:" + id + " not found");
                     log.info("Schedule with Id:" + id + " not found ");
                 }
