@@ -152,24 +152,30 @@ public class ScheduleManager {
 
     public void showDaySchedules() {
         System.out.println(" Date of schedules : " + schedulesDate);
-        System.out.println("_______________________________________");
+        int count = 1;
         for (ClassSchedule classSchedule : daySchedules) {
-            System.out.println(classSchedule.toString());
+            System.out.println( count + ". "+ " Id: "+ classSchedule.getId()+ ", class type : "+ classSchedule.getClassType()+", trainer name : "+ classSchedule.getTrainerName()+", time : "+ classSchedule.getTime()+", room: "+ classSchedule.getRoom());
+            count++;
+
+           // System.out.println(classSchedule.toString());
         }
 
     }
 
     public void generateScheduleReport(LocalDate schedulesDate, String trainerName){
-        System.out.println(" Schedule report for  as of trainer : "+ trainerName + " for " + schedulesDate);
-        System.out.println("_______________________________________");
-        int count = 0;
+
+
+        //List<ClassSchedule>trainerReportList = new ArrayList<>();
+        int count =0;
         for (ClassSchedule classSchedule : daySchedules) {
             if (classSchedule.getTrainerName().equals(trainerName)){
+
                 count +=1;
+                //trainerReportList.add(classSchedule);
             }
 
         }
-        System.out.println(" Trainer : "+ trainerName + "conducted " + count+ " schedules");
+        System.out.println( "Trainer : "+ trainerName+ "  conducted " + count+ " schedules  at " + schedulesDate);
     }
 
 
